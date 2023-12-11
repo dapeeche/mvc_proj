@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Controllers;
-class UserController
+use Core\Controller;
+
+class UserController extends Controller
 {
 
 }
