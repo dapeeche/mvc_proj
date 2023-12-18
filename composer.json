@@ -4,7 +4,10 @@
       "App\\" : "App/",
       "Config\\": "Config/",
       "Core\\": "Core/"
-    }
+    },
+    "files": [
+      "Routes/web.php"
+    ]
   },
   "require": {
     "ext-pdo": "*"
