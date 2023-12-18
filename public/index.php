@@ -6,9 +6,6 @@ require_once BASE_DIR . '/Config/constants.php';
 
 try {
     if (!preg_match('/assets/i', $_SERVER['REQUEST_URI'])) {
-        echo "<pre>";
-        print_r($_SERVER);
-        echo "</pre>";
         \Core\Router::dispatch($_SERVER['REQUEST_URI']);
     }
 }
