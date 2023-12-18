@@ -37,3 +37,12 @@ Router::add(
         'method' => 'POST'
     ]
 );
+
+Router::add(
+    'posts/{post_id:\d+}/comment/{comment_id:\d+}',
+    [
+        'controller' => \App\Controllers\UsersController::class,
+        'action' => 'show',
+        'method' => 'GET'
+    ]
+);
