@@ -6,10 +6,12 @@
       "Core\\": "Core/"
     },
     "files": [
-      "Routes/web.php"
+      "Routes/web.php",
+      "Core/helpers.php"
     ]
   },
   "require": {
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "vlucas/phpdotenv": "^5.6"
   }
 }
