@@ -1,11 +1,12 @@
 <?php
-
+use Core\Config;
+use Core\Db;
 function config(string $name): string | null
 {
-    return \Core\Config::get($name);
+    return Config::get($name);
 }
 
 function db(): PDO
 {
-    return \Core\Db::connect();
+    return Db::connect();
 }

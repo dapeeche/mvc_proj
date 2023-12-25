@@ -16,9 +16,8 @@ class Migration
     protected PDO $db;
     public function __construct()
     {
-        $this->db = db();
         try {
-            $this->db->beginTransaction();
+            db()->beginTransaction();
 
             $this->createMigrationTable();
             $this->runMigrations();
@@ -29,8 +28,8 @@ class Migration
 
         } catch (PDOException $exception) {
             var_dump($exception->getMessage(), $exception->getTrace());
-            if ($this->db->inTransaction()) {
-            $this->db->rollBack();
+            if (db()->inTransaction()) {
+                db()->rollBack();
         }
         }
     }
@@ -45,17 +44,43 @@ class Migration
             ['.', '..', static::MIGRATIONS_FILE . '.sql']
         ));
 
-        foreach($migrations as $script) {
-            $table = preg_replace('/[\d]+_/i', '', $script);
+        foreach($migrations as $migration) {
+            if (!$this->checkIfMigrationWasRun($migration)) {
+                var_dump("- Run '$migration' ...");
+                $query = $this->getQueryByFile($migration);
+
+                if ($query->execute()) {
+                    $this->logIntoMigrations($migration);
+                    var_dump("- '$migration' DONE");
+                }
+            } else {
+                var_dump("- '$migration' SKIPPED");
+            }
         }
-        var_dump('--migrations done --');
+        var_dump('-- migrations done --');
+    }
+
+    protected function logIntoMigrations(string $migration): void
+    {
+        $query = db()->prepare("INSERT INTO migrations (name) VALUES (:name)");
+        $query->bindParam('name', $migration);
+        $query->execute();
+    }
+
+    protected function checkIfMigrationWasRun($migration): bool
+    {
+        $query = db()->prepare("SELECT id FROM migrations WHERE name = :name");
+        $query->bindParam('name', $migration);
+        $query->execute();
+
+        return (bool) $query->fetch();
     }
 
     protected function createMigrationTable(): void
     {
         var_dump('--Prepare migration table query --');
-        $sql = file_get_contents(static::SCRIPTS_DIR . static::MIGRATIONS_FILE . '.sql');
-        $query = $this->db->prepare($sql);
+
+        $query = $this->getQueryByFile(static::MIGRATIONS_FILE . '.sql');
 
         $result = match ($query->execute()) {
             true => 'migration table created',
@@ -63,6 +88,11 @@ class Migration
         };
 
         var_dump($result, '-- finish --');
+    }
+    protected function getQueryByFile(string $migration): PDOStatement
+    {
+        $sql = file_get_contents(static::SCRIPTS_DIR . $migration);
+        return db()->prepare($sql);
     }
 
 } new Migration;
