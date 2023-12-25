@@ -20,6 +20,15 @@ trait Queryable
 
         return $obj;
     }
+    public function update(int $id, array $data)
+    {
+        static::$query = "UPDATE " . static::$tableName . " SET " . $data . " WHERE id = {$id}";
+
+        $obj = new static;
+        $obj->commands[] = 'update';
+
+        return $obj;
+    }
 
     static public function all(): array
     {
@@ -82,4 +91,6 @@ trait Queryable
     {
         return db()->query(static::$query)->fetchAll(PDO::FETCH_CLASS, static::class);
     }
+
+
 }
