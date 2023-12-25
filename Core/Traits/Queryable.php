@@ -22,7 +22,10 @@ trait Queryable
     }
     public function update(int $id, array $data)
     {
-        static::$query = "UPDATE " . static::$tableName . " SET " . $data . " WHERE id = {$id}";
+        foreach ($data as $key => $value) {
+            $str = $key . ' = ' . $value;
+        }
+        static::$query = "UPDATE " . static::$tableName . " SET " . $str . " WHERE id = {$id}";
 
         $obj = new static;
         $obj->commands[] = 'update';
